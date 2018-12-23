@@ -1,0 +1,29 @@
+if (object == null) { throw ("No object specified, cannot get metadata"); }
+if (key == null) { throw ("No key specified, cannot get metadata"); }
+
+// Get a reference to the vCloud Host for this object so we can use this to retrieve:
+var Host = object.parent;
+while (!(Host instanceof VclHost)) { Host = Host.parent; }
+
+if (domain == "") {
+	var URI = object.href + '/metadata/' + key;
+} else {
+	var URI = object.href + '/metadata/' + domain + '/' + key;
+}
+
+var vcloudNS = new Namespace("vcloud","http://www.vmware.com/vcloud/v1.5");
+
+System.debug("URI: [" + URI + "]");
+
+var metadata = new XML(Host.get(URI));
+
+if (metadata == "") {
+	System.log("No data found for metadata key [" + key + "] on object [" + object.name + "]");
+	return null;
+} else {
+	default xml namespace = vcloudNS;
+	var value = metadata.TypedValue.Value.toString();
+	System.debug("Metadata XML returned:" + metadata);
+	System.log("Found metadata for metadata key [" + key + "] on object [" + object.name + "] with value [" + value + "]");
+	return value;
+}
