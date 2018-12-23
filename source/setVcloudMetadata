@@ -1,0 +1,63 @@
+if (object == null) { throw ("No object specified, cannot set metadata"); }
+if (key == null)    { throw ("No key specified, cannot set metadata"); }
+if (value == null)  { throw ("No value specified, cannot set metadata"); }
+
+if (hidden == null) { hidden = false; }
+if (readOnly == null) { readOnly = false; }
+if (waitForTask == null) { waitForTask = false; }
+
+// Get a reference to the vCloud Host for this object so we can use this to update:
+var Host = object.parent;
+while (!(Host instanceof VclHost)) { Host = Host.parent; }
+
+// Get the correct object schema type for the value we're setting:
+if (dataType != null) { dataTypeLower = dataType.toLowerCase(); }
+var typeSpec = 'MetadataStringValue';
+if (dataTypeLower == 'number') { 
+	typeSpec = 'MetadataNumberValue';
+	value = parseInt(value, 10);
+	}
+else if (dataTypeLower == 'boolean') { typeSpec = 'MetadataBooleanValue'; }
+else if (dataTypeLower == 'datetime') {
+	typeSpec = 'MetadataDateTimeValue'; 
+	if (value == 'now') { value = new Date().toISOString(); }
+}
+
+// Handle options for Domain/visibility:
+if (readOnly) { visibility="READONLY"; }
+if (hidden)   { visibility="PRIVATE"; }
+
+// Build the XML document to be submitted to the API:
+var vcloudNS = new Namespace("vcloud","http://www.vmware.com/vcloud/v1.5");
+var typeNS = new Namespace("http://www.w3.org/2001/XMLSchema-instance");
+default xml namespace = vcloudNS;
+var metadata = new XML('<Metadata><MetadataEntry></MetadataEntry></Metadata>');
+if (readOnly || hidden) {
+	metadata.MetadataEntry.Domain = 'SYSTEM';
+	metadata.MetadataEntry.Domain.@visibility = visibility;
+}
+metadata.MetadataEntry.Key = key;
+metadata.MetadataEntry.TypedValue.@typeNS::type = typeSpec;
+metadata.MetadataEntry.TypedValue.Value = value;
+
+var URI = object.href + '/metadata';
+
+System.debug("URI: [" = URI + "]");
+System.debug("metadata XML: [" + metadata + "]");
+
+var task = new VclTaskParams;
+task.loadFromXml(Host.post(URI, metadata, 'application/vnd.vmware.vcloud.metadata+xml'));
+
+var taskobj = Host.getEntityByHref(VclFinderType.TASK,task.href);
+
+if (waitForTask) {
+	System.log("Waiting for task to finish...");
+	while (taskobj.status == 'queued' || taskobj.status == 'running') {
+		System.sleep(1000);		// wait a second
+		taskobj.updateInternalState();
+	}
+}
+
+System.log("Metadata value [" + value + "] set for key [" + key + "] on object [" + object.name + "] status [" + taskobj.status + "]");
+
+return taskobj;
