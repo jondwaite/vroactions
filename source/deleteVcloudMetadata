@@ -1,0 +1,31 @@
+if (object == null) { throw ("No object specified, cannot delete metadata"); }
+if (key == null) { throw ("No key specified, cannot delete metadata"); }
+
+// Get a reference to the vCloud Host for this object so we can use this to retrieve:
+var Host = object.parent;
+while (!(Host instanceof VclHost)) { Host = Host.parent; }
+
+if (domain == "") {
+	var URI = object.href + '/metadata/' + key;
+} else {
+	var URI = object.href + '/metadata/' + domain + '/' + key;
+}
+
+System.debug("URI: [" + URI + "]");
+
+var task = new VclTaskParams;
+task.loadFromXml(XML(Host.delete(URI)));
+
+var taskobj = Host.getEntityByHref(VclFinderType.TASK,task.href);
+
+if (waitForTask) {
+	System.log("Waiting for task to finish...");
+	while (taskobj.status == 'queued' || taskobj.status == 'running') {
+		System.sleep(1000);		// wait a second
+		taskobj.updateInternalState();
+	}
+}
+
+System.log("Metadata key [" + key + "] removed from object [" + object.name + "]");
+
+return taskobj;
