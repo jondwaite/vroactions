@@ -5,6 +5,8 @@ I got frustrated by the poor support 'out of the box' for vRealize Orchestrator 
 
 Each .action file can be imported into an Action library in vRealize Orchestrator and then used individually or collectively as required. The sections below detail the parameters and actions for each module.
 
+The source folder contains the javascript listings for the code contained in each Action for reference.
+
 ## getVcloudMetadata Action
 
 This action returns the value of the specified vCloud metadata entry. It should work for any valid vCloud Director object reference but has been mainly tested on VM and vApp objects. Rather than request all metadata entries and then attempt to match the 'key' it only retrieves the requested key value from the vCD API.
