@@ -7,6 +7,19 @@ Each .action file can be imported into an Action library in vRealize Orchestrato
 
 The source folder contains the javascript listings for the code contained in each Action for reference.
 
+## Supported Versions
+
+The actions do not require any of the actions included in the VMware vRO plugin for vCD, but in order to be able to add vCD endpoints to the UI in vRO and select objects (e.g. browse for a VM object to pass this to the workflow) you will need to have some version of the plugin installed and configured.
+
+The specific versions used in development/testing were:
+vRealize Orchestrator v7.5 (Build 7.5.0.10044239)
+vCloud Director v9.5.0.1 (Build 9.5.0.11038232)
+vCloud Director 9.5 plugin for vRealize Operations (Build 10198325)
+
+Any versions of vCloud Director from 5.1 up (5.6, 8.0, 8.10, 8.20, 9.0, 9.1 and 9.5) should work as the metadata API is consistent for these, however all testing has been done against v9.5. Would appreciate feedback on compatibility here.
+
+Any versions of vRealize Orchestrator that support a vCloud Director plugin should also work, testing has been performed on vRO v7.5 so again any feedback on compatible (or incompatible) versions appreciated.
+
 ## getVcloudMetadata Action
 
 This action returns the value of the specified vCloud metadata entry. It should work for any valid vCloud Director object reference but has been mainly tested on VM and vApp objects. Rather than request all metadata entries and then attempt to match the 'key' it only retrieves the requested key value from the vCD API.
