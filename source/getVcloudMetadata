@@ -1,5 +1,5 @@
 if (object == null) { throw ("No object specified, cannot get metadata"); }
-if (key == null) { throw ("No key specified, cannot get metadata"); }
+if (key == null) { throw ("No metadata key specified, cannot get metadata"); }
 
 // Get a reference to the vCloud Host for this object so we can use this to retrieve:
 var Host = object.parent;

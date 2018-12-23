@@ -53,9 +53,11 @@ var taskobj = Host.getEntityByHref(VclFinderType.TASK,task.href);
 if (waitForTask) {
 	System.log("Waiting for task to finish...");
 	while (taskobj.status == 'queued' || taskobj.status == 'running') {
+		System.debug("Task status is [" + taskobj.status + "] waiting for 1 second before re-check");
 		System.sleep(1000);		// wait a second
 		taskobj.updateInternalState();
 	}
+	System.debug("Task status is [" + taskobj.status + "] continuing...");
 }
 
 System.log("Metadata value [" + value + "] set for key [" + key + "] on object [" + object.name + "] status [" + taskobj.status + "]");
