@@ -9,7 +9,7 @@ The source folder contains the javascript listings for the code contained in eac
 
 ## Supported Versions
 
-The actions do not require any of the actions included in the VMware vRO plugin for vCD, but in order to be able to add vCD endpoints to the UI in vRO and select objects (e.g. browse for a VM object to pass this to the workflow) you will need to have some version of the plugin installed and configured.
+The actions use some of the actions included in the VMware vRO plugin for vCD, so you will need to have this plugin installed and configured.
 
 The specific versions used in development/testing were:
 vRealize Orchestrator v7.5 (Build 7.5.0.10044239)
